@@ -26,7 +26,6 @@ jobs:
       - name: Run Gemini Leaderboard Scraper
         uses: google-gemini/gemini-cli-action@main
         env:
-          LEADERBOARD_URL: "https://swe-rebench.com/leaderboard"
           TODAY_DATE: ${{ steps.date.outputs.today }}
           TIMESTAMP: ${{ steps.date.outputs.timestamp }}
         with:
@@ -43,21 +42,10 @@ jobs:
               ]
             }
           prompt: |
-            請從我提供的 leaderboard 爬取今日排行榜。
+            請從 https://swe-rebench.com/leaderboard 爬取今日排行榜。
 
       - name: Upload leaderboard data to artifacts
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: swe-bench-leaderboard-${{ steps.date.outputs.timestamp }}
-          path: |
-            swe_bench_leaderboard_*.json
-            leaderboard.html
-          retention-days: 30
-
-      - name: Cache latest leaderboard data
-        uses: actions/cache/save@v4
-        if: success()
-        with:
-          path: swe_bench_leaderboard_*.json
-          key: swe-bench-leaderboard-latest-${{ steps.date.outputs.today }}
+          path: "*"
