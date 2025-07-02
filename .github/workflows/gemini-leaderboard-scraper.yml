@@ -2,8 +2,8 @@ name: AI Leaderboard Scraper
 
 on:
   schedule:
-    - cron: '0 0 * * *' # 每天早上八點執行
-  workflow_dispatch: {} # 允許手動觸發
+    - cron: '0 0 * * *' # Run daily at 8 AM
+  workflow_dispatch: {} # Allow manual trigger
 
 jobs:
   scrape-leaderboards:
@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-      actions: write # 需要寫入 action storage 的權限
+      actions: write # Permission to write to action storage
     strategy:
       matrix:
         leaderboard:
@@ -25,18 +25,18 @@ jobs:
           - name: "llm-stats"
             url: "https://llm-stats.com/"
             filename: "llm-stats-leaderboard.md"
-          # - name: "lmarena"
-          #   url: "https://lmarena.ai/leaderboard"
-          #   filename: "lmarena-leaderboard.md"
-          # - name: "scale-ai"
-          #   url: "https://scale.com/leaderboard"
-          #   filename: "scale-ai-leaderboard.md"
-          # - name: "llm-stats"
-          #   url: "https://llm-stats.com/"
-          #   filename: "llm-stats-leaderboard.md"
-          # - name: "huggingface-open-llm"
-          #   url: "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"
-          #   filename: "huggingface-open-llm-leaderboard.md"
+          - name: "lmarena"
+            url: "https://lmarena.ai/leaderboard"
+            filename: "lmarena-leaderboard.md"
+          - name: "scale-ai"
+            url: "https://scale.com/leaderboard"
+            filename: "scale-ai-leaderboard.md"
+          - name: "llm-stats"
+            url: "https://llm-stats.com/"
+            filename: "llm-stats-leaderboard.md"
+          - name: "huggingface-open-llm"
+            url: "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"
+            filename: "huggingface-open-llm-leaderboard.md"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -63,21 +63,21 @@ jobs:
               ]
             }
           prompt: |
-            請從 ${{ matrix.leaderboard.url }} 爬取今日排行榜資料，並將結果整理成 markdown 格式。
+            Please scrape today's leaderboard data from ${{ matrix.leaderboard.url }} and format the results into markdown format.
             
-            要求：
-            1. 爬取完整的排行榜資料，包含所有模型的排名、分數等資訊
-            2. 將資料格式化為清晰易讀的 markdown 表格格式
-            3. 在 markdown 開頭加上爬取時間和資料來源
-            4. 將結果儲存為檔案，檔名格式：${{ matrix.leaderboard.filename }}
-            5. 爬取時間和資料來源連結，中間需要空行，只能用純文字
+            Requirements:
+            1. Scrape complete leaderboard data, including all model rankings, scores, and other information
+            2. Format the data into a clear and readable markdown table format
+            3. Add scraping time and data source at the beginning of the markdown
+            4. Save the result as a file with filename format: ${{ matrix.leaderboard.filename }}
+            5. Include scraping time and data source link with blank lines in between, using plain text only
             
-            請確保 markdown 檔案包含：
-            - 標題
-            - 爬取時間
-            - 資料來源連結
-            - 完整的排行榜表格（包含排名、模型名稱、分數等欄位）
-            - 任何重要的註解或說明
+            Please ensure the markdown file contains:
+            - Title
+            - Scraping time
+            - Data source link
+            - Complete leaderboard table (including ranking, model names, scores, and other fields)
+            - Any important notes or explanations
 
       - name: Upload ${{ matrix.leaderboard.name }} leaderboard data to artifacts
         uses: actions/upload-artifact@v4
