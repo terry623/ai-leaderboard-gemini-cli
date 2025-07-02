@@ -20,8 +20,8 @@ jobs:
       - name: Get current date
         id: date
         run: |
-          echo "today=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
-          echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
+          echo "today=$(TZ='Asia/Taipei' date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+          echo "timestamp=$(TZ='Asia/Taipei' date +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
 
       - name: Run Gemini Leaderboard Scraper
         uses: google-gemini/gemini-cli-action@main
@@ -46,9 +46,11 @@ jobs:
             2. 將資料格式化為清晰易讀的 markdown 表格格式
             3. 在 markdown 開頭加上爬取時間和資料來源
             4. 將結果儲存為檔案，檔名格式：swe-bench-leaderboard.md
+            5. 爬取時間和資料來源連結，中間需要空行
             
             請確保 markdown 檔案包含：
-            - 標題和爬取時間
+            - 標題
+            - 爬取時間
             - 資料來源連結
             - 完整的排行榜表格（包含排名、模型名稱、分數等欄位）
             - 任何重要的註解或說明
