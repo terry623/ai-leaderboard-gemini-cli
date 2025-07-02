@@ -1,6 +1,8 @@
 name: AI Leaderboard Scraper
 
 on:
+  schedule:
+    - cron: '0 0 * * *' # 每天早上八點執行
   workflow_dispatch: {} # 允許手動觸發
 
 jobs:
@@ -81,4 +83,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.leaderboard.name }}-leaderboard-${{ steps.date.outputs.timestamp }}
-          path: *.md
+          path: |
+            *.md
+            **/*.md
+          if-no-files-found: warn
