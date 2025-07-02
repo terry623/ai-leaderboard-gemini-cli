@@ -33,12 +33,7 @@ jobs:
           settings_json: |
             {
               "coreTools": [
-                "run_shell_command(curl)",
-                "run_shell_command(wget)",
-                "run_shell_command(cat)",
-                "run_shell_command(echo)",
-                "run_shell_command(mkdir)",
-                "run_shell_command(ls)"
+                "WebFetchTool"
               ]
             }
           prompt: |
