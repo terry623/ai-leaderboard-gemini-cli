@@ -34,7 +34,8 @@ jobs:
             {
               "coreTools": [
                 "WebFetchTool",
-                "WriteFile"
+                "WriteFileTool",
+                "ShellTool"
               ]
             }
           prompt: |
