@@ -1,0 +1,133 @@
+name: SWE-Bench Leaderboard Scraper
+
+on:
+  schedule:
+    - cron: '0 * * * *' # 每小時執行一次
+  workflow_dispatch: {} # 允許手動觸發
+
+jobs:
+  scrape-leaderboard:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      actions: write # 需要寫入 action storage 的權限
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get current date
+        id: date
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+          echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
+
+      - name: Run Gemini Leaderboard Scraper
+        uses: google-gemini/gemini-cli-action@main
+        env:
+          LEADERBOARD_URL: "https://swe-rebench.com/leaderboard"
+          TODAY_DATE: ${{ steps.date.outputs.today }}
+          TIMESTAMP: ${{ steps.date.outputs.timestamp }}
+        with:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          settings_json: |
+            {
+              "coreTools": [
+                "run_shell_command(curl)",
+                "run_shell_command(wget)",
+                "run_shell_command(cat)",
+                "run_shell_command(echo)",
+                "run_shell_command(mkdir)",
+                "run_shell_command(ls)"
+              ]
+            }
+          prompt: |
+            你是一個網頁爬蟲助手，專門負責爬取 SWE-Bench 排行榜資料。
+
+            **任務目標：**
+            爬取今日的 SWE-Bench 排行榜資料並儲存為結構化格式。
+
+            **執行步驟：**
+
+            1. **爬取排行榜頁面：**
+               使用 curl 或 wget 爬取排行榜頁面：
+               ```bash
+               curl -s -L "$LEADERBOARD_URL" -o leaderboard.html
+               ```
+
+            2. **解析排行榜資料：**
+               分析 HTML 內容，提取以下資訊：
+               - 排名 (Rank)
+               - 模型名稱 (Model Name)
+               - 分數 (Score)
+               - 解決的問題數量 (Resolved Issues)
+               - 總問題數量 (Total Issues)
+               - 成功率 (Success Rate)
+               - 提交日期 (Submission Date)
+               - 組織/作者 (Organization/Author)
+
+            3. **建立結構化資料：**
+               將解析的資料轉換為 JSON 格式，包含以下結構：
+               ```json
+               {
+                 "scrape_date": "$TODAY_DATE",
+                 "scrape_timestamp": "$TIMESTAMP",
+                 "source_url": "$LEADERBOARD_URL",
+                 "leaderboard": [
+                   {
+                     "rank": 1,
+                     "model_name": "模型名稱",
+                     "score": 85.5,
+                     "resolved_issues": 342,
+                     "total_issues": 400,
+                     "success_rate": "85.5%",
+                     "submission_date": "2024-01-15",
+                     "organization": "組織名稱"
+                   }
+                 ]
+               }
+               ```
+
+            4. **儲存資料：**
+               將 JSON 資料儲存到檔案：
+               ```bash
+               echo "$JSON_DATA" > "swe_bench_leaderboard_$TIMESTAMP.json"
+               ```
+
+            5. **建立摘要報告：**
+               建立一個簡短的摘要報告，包含：
+               - 爬取時間
+               - 排行榜前 5 名
+               - 總共有多少個模型參與排名
+               - 最高分數和最低分數
+
+            **重要注意事項：**
+            - 確保處理可能的網路錯誤和 HTML 解析錯誤
+            - 如果網頁結構有變化，請適當調整解析邏輯
+            - 保持資料格式的一致性
+            - 在每個步驟後檢查執行結果
+
+            **環境變數：**
+            - LEADERBOARD_URL: $LEADERBOARD_URL
+            - TODAY_DATE: $TODAY_DATE  
+            - TIMESTAMP: $TIMESTAMP
+
+            請開始執行爬蟲任務。
+
+      - name: Upload leaderboard data to artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swe-bench-leaderboard-${{ steps.date.outputs.timestamp }}
+          path: |
+            swe_bench_leaderboard_*.json
+            leaderboard.html
+          retention-days: 30
+
+      - name: Cache latest leaderboard data
+        uses: actions/cache/save@v4
+        if: success()
+        with:
+          path: swe_bench_leaderboard_*.json
+          key: swe-bench-leaderboard-latest-${{ steps.date.outputs.today }}
