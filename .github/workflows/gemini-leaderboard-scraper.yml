@@ -1,4 +1,4 @@
-name: SWE-Bench Leaderboard Scraper
+name: AI Leaderboard Scraper
 
 on:
   schedule:
@@ -6,13 +6,34 @@ on:
   workflow_dispatch: {} # 允許手動觸發
 
 jobs:
-  scrape-leaderboard:
+  scrape-leaderboards:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
       actions: write # 需要寫入 action storage 的權限
+    strategy:
+      matrix:
+        leaderboard:
+          - name: "swe-bench"
+            url: "https://swe-rebench.com/leaderboard"
+            filename: "swe-bench-leaderboard.md"
+          - name: "vellum-ai"
+            url: "https://www.vellum.ai/llm-leaderboard"
+            filename: "vellum-ai-leaderboard.md"
+          - name: "lmarena"
+            url: "https://lmarena.ai/leaderboard"
+            filename: "lmarena-leaderboard.md"
+          - name: "scale-ai"
+            url: "https://scale.com/leaderboard"
+            filename: "scale-ai-leaderboard.md"
+          - name: "llm-stats"
+            url: "https://llm-stats.com/"
+            filename: "llm-stats-leaderboard.md"
+          - name: "huggingface-open-llm"
+            url: "https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard"
+            filename: "huggingface-open-llm-leaderboard.md"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,7 +44,7 @@ jobs:
           echo "today=$(TZ='Asia/Taipei' date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
           echo "timestamp=$(TZ='Asia/Taipei' date +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
 
-      - name: Run Gemini Leaderboard Scraper
+      - name: Run ${{ matrix.leaderboard.name }} Leaderboard Scraper
         uses: google-gemini/gemini-cli-action@main
         env:
           TODAY_DATE: ${{ steps.date.outputs.today }}
@@ -39,13 +60,13 @@ jobs:
               ]
             }
           prompt: |
-            請從 https://swe-rebench.com/leaderboard 爬取今日排行榜資料，並將結果整理成 markdown 格式。
+            請從 ${{ matrix.leaderboard.url }} 爬取今日排行榜資料，並將結果整理成 markdown 格式。
             
             要求：
             1. 爬取完整的排行榜資料，包含所有模型的排名、分數等資訊
             2. 將資料格式化為清晰易讀的 markdown 表格格式
             3. 在 markdown 開頭加上爬取時間和資料來源
-            4. 將結果儲存為檔案，檔名格式：swe-bench-leaderboard.md
+            4. 將結果儲存為檔案，檔名格式：${{ matrix.leaderboard.filename }}
             5. 爬取時間和資料來源連結，中間需要空行
             
             請確保 markdown 檔案包含：
@@ -55,8 +76,8 @@ jobs:
             - 完整的排行榜表格（包含排名、模型名稱、分數等欄位）
             - 任何重要的註解或說明
 
-      - name: Upload leaderboard data to artifacts
+      - name: Upload ${{ matrix.leaderboard.name }} leaderboard data to artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: swe-bench-leaderboard-${{ steps.date.outputs.timestamp }}
-          path: "*.md"
+          name: ${{ matrix.leaderboard.name }}-leaderboard-${{ steps.date.outputs.timestamp }}
+          path: ${{ matrix.leaderboard.filename }}
