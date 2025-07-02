@@ -67,7 +67,7 @@ jobs:
             2. 將資料格式化為清晰易讀的 markdown 表格格式
             3. 在 markdown 開頭加上爬取時間和資料來源
             4. 將結果儲存為檔案，檔名格式：${{ matrix.leaderboard.filename }}
-            5. 爬取時間和資料來源連結，中間需要空行
+            5. 爬取時間和資料來源連結，中間需要空行，只能用純文字
             
             請確保 markdown 檔案包含：
             - 標題
@@ -80,4 +80,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.leaderboard.name }}-leaderboard-${{ steps.date.outputs.timestamp }}
-          path: ${{ matrix.leaderboard.filename }}
+          path: *.md
