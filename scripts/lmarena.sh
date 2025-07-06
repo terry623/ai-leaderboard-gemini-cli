@@ -3,7 +3,7 @@
 set -euo pipefail
 
 echo "Executing Gemini CLI to scrape lmarena leaderboard..."
-gemini -y -p "
+gemini -m "gemini-2.5-flash" -y -p "
 請從目標網址 https://lmarena.ai/leaderboard 爬取今日排行榜資料，並將結果整理成 markdown 格式。
             
 - 嚴格限制：僅能使用從目標網址爬取到的特定網頁內容作為資料來源
