@@ -20,7 +20,7 @@ mkdir -p "$OUTPUT_DIR"
 for SCRIPT in "${SCRIPTS[@]}"; do
   echo "➤ Running $SCRIPT …"
   "$SCRIPT"
-  mv ./*.md "$OUTPUT_DIR"/
+  mv ./*.md "$OUTPUT_DIR"/ 2>/dev/null || true
 done
 
 # ===== 4. Git commit & push =====
