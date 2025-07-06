@@ -13,7 +13,7 @@ SCRIPTS=(
 # ===== 2. 產生日期與時間資料夾 =====
 DATE=$(date +%Y-%m-%d)   # 例如 2025-07-06
 TIME=$(date +%H-%M)      # 例如 17-21；同分鐘重跑才會衝突
-OUTPUT_DIR="data/${DATE}/${TIME}"
+OUTPUT_DIR="output/${DATE}/${TIME}"
 mkdir -p "$OUTPUT_DIR"
 
 # ===== 3. 執行腳本並搬移 .md =====
