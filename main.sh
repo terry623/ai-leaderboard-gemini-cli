@@ -18,7 +18,7 @@ for SCRIPT in "${SCRIPTS[@]}"; do
   echo "➤ Running $SCRIPT …"
 
   "$SCRIPT"
-  mv "./${NAME}.md" "${OUTPUT_DIR}/"
+  mv ./*.md "$OUTPUT_DIR"/
 
 done
 
