@@ -3,7 +3,7 @@
 set -euo pipefail
 
 echo "Executing Gemini CLI to scrape swe rebench leaderboard..."
-gemini -m "gemini-2.5-flash" -y -p "
+gemini -m "gemini-2.5-pro" -y -p "
 請從目標網址 https://swe-rebench.com/leaderboard 爬取「今日排行榜」資料，並將結果整理成 Markdown。
 
 **嚴格限制：僅能使用指定網頁內容作為資料來源**
