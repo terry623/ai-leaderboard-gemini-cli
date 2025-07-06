@@ -3,10 +3,10 @@ set -euo pipefail   # 嚴格模式：任何指令失敗就終止
 
 # ===== 1. 要執行的腳本清單 =====
 SCRIPTS=(
-  "./scripts/llm.sh",
-  "./scripts/lmarena.sh",
-  "./scripts/swe.sh",
-  "./scripts/vellum.sh",
+  "./scripts/llm.sh"
+  "./scripts/lmarena.sh"
+  "./scripts/swe.sh"
+  "./scripts/vellum.sh"
   "./scripts/scale.sh"
 )
 
