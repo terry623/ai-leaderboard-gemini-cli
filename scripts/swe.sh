@@ -27,4 +27,5 @@ gemini -m "gemini-2.5-flash" -y -p "
 3. 必須實際寫入檔案並回傳
 
 請遵守以上規範，確保無論資料完整與否，都會輸出結構正確的 Markdown 檔案。
+檔案名稱必須為 swe-leaderboard.md，不可更改或自行命名。
 "
