@@ -32,11 +32,10 @@ git push
 
 echo "✅ 所有 Markdown 已推送到 ${OUTPUT_DIR}/"
 
-# ===== 5. 設定自動排程 (需手動執行) =====
-# 1. 用 pmset 設定每天 07:55 自動喚醒 (macOS 專用指令)
-# sudo pmset repeat wakeorpoweron MTWRFSU 07:57:00  # MTWRFSU = 每天
+# ===== 5. 設定自動排程 =====
+# 1. 設定每天執行腳本前的自動喚醒
+# sudo pmset repeat wakeorpoweron MTWRFSU 07:55:00  # MTWRFSU = 每天
 # pmset -g sched  # 檢查現有排程
 
-# 2. 用 crontab 設定定時執行此腳本 (通用 Unix 系統)
-# crontab -e  # 編輯排程，加入以下規則：
-# 0 8 * * * /path/to/main.sh  # 每天 8:00 執行
+# 2. 設定定時執行此腳本
+# 待補充
