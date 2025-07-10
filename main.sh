@@ -7,7 +7,7 @@ echo "⏰ Current time: $(date +'%Y-%m-%d %H:%M:%S') ⏰"
 # ===== 1. 要執行的腳本清單 =====
 SCRIPTS=(
   "./scripts/lmarena.sh"
-  "./scripts/swe.sh"
+  # "./scripts/swe.sh"
   "./scripts/vellum.sh"
   "./scripts/scale.sh"
 )
